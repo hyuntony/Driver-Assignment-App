@@ -1,22 +1,18 @@
-import logo from './logo.svg';
 import './App.css';
+
+import DriverOrder from './components/Driver-Order';
+
+const data = [
+  {title: 'Steven Williams', items: ['1', '2', '3']},
+  {title: 'Chris Horton', items: ['4', '5']},
+  {title: 'Alex Novak', items: ['6']}
+]
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <DriverOrder data={data} />
       </header>
     </div>
   );
