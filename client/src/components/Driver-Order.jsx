@@ -24,7 +24,7 @@ function DriverOrder({data}) {
       console.log("TARGET IS NOT THE SAME");
       setList(oldList => {
         let newList = JSON.parse(JSON.stringify(oldList));
-        newList[params.driverI].items.splice(params.orderI, 0, newList[currentItem.driverI].items.splice(currentItem.orderI, 1)[0])
+        newList[params.driverI].orders.splice(params.orderI, 0, newList[currentItem.driverI].orders.splice(currentItem.orderI, 1)[0])
         dragItem.current = params
         return newList
       })
@@ -51,22 +51,24 @@ function DriverOrder({data}) {
     <div className="drag-drop">
           {list.map((driver, driverI) => (
             <div 
-              key={driver.title} 
+              key={driver.fullname} 
               className="dnd-group"
-              onDragEnter={dragging && !driver.items.length?(e) => handleDragEnter(e, {driverI, orderI: 0}):null}
+              onDragEnter={dragging && !driver.orders.length?(e) => handleDragEnter(e, {driverI, orderI: 0}):null}
               onDragOver={(e) => {e.preventDefault()}}
             >
-              <div className="group-title">{driver.title}</div>
-              {driver.items.map((order, orderI) => (
+              <div className="group-title">{driver.fullname}</div>
+              {driver.orders.map((order, orderI) => (
                 <div
                   draggable
                   onDragOver={(e) => {e.preventDefault()}}
                   onDragStart={(e) => {handleDragStart(e, {driverI, orderI})}}
                   onDragEnter={dragging?(e) => {handleDragEnter(e, {driverI, orderI})}:null}
-                  key={order} 
+                  key={order.id} 
                   className={dragging?getStyles({driverI, orderI}):"dnd-item"}
                 >
-                  {order}
+                  <div>{order.description}</div>
+                  <div>Revenue: $<span style={{ color: 'green' }}>{order.revenue}</span></div>
+                  <div>Cost: $<span style={{ color: 'red' }}>{order.cost}</span></div>
                 </div>
               ))}
             </div>
