@@ -41,6 +41,7 @@
 }
 
 .dnd-item {
+  position: relative;
   min-height: 150px;
   background-color: antiquewhite;
   color: #282c34;
@@ -50,12 +51,23 @@
   align-items: center;
   flex-direction: column;
 }
+.dnd-item button {
+  padding: 0;
+  border: none;
+  background: none;
+}
 .dnd-item:not(:last-of-type) {
   margin-bottom: .5rem;
 }
 .dnd-item * {
   margin: 0;
   font-size: 1.2rem;
+}
+.green {
+  color: green;
+}
+.red {
+  color: red;
 }
 .group-title {
   text-align: left;
@@ -65,6 +77,25 @@
 .current {
   background-color: #282c34;
 }
+.current span {
+  color:#282c34;
+}
+.equal-icon {
+  position: absolute;
+  top: 5px;
+}
+.edit-icon {
+  position: absolute;
+  top: 5px;
+  right: 25px;
+}
+.edit-icon:hover {color:lightblue}
+.delete-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+.delete-icon:hover {color:red}
 
 .App-link {
   color: #61dafb;
