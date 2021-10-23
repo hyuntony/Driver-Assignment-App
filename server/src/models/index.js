@@ -1,13 +1,13 @@
-import mongoose, { models } from 'mongoose';
+import mongoose from 'mongoose';
+
+import Driver from './driver.js';
+import Order from './order.js';
 
 const connectDb = () => {
-  return mongoose.connect(process.env.DATABASE_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true
-  });
+  return mongoose.connect(process.env.DATABASE_URL);
 };
+
+const models = { Driver, Order }
 
 export { connectDb };
 
