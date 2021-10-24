@@ -24,7 +24,7 @@ app.use(morgan('dev'));
 
 app.use('/', indexRouter);
 
-const eraseDatabaseOnSync = true;
+const eraseDatabaseOnSync = false;
 
 connectDb().then(async () => {
   if (eraseDatabaseOnSync) {

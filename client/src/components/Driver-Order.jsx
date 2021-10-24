@@ -25,9 +25,12 @@ function DriverOrder() {
 
   const dragItem = useRef();
   const dragNode = useRef();
+  const dragOrderId = useRef();
+  const dragDriverId = useRef();
 
-  const handleDragStart = (e, params) => {
+  const handleDragStart = (e, params, orderId) => {
     console.log('drag starting..', params)
+    dragOrderId.current = orderId;
     dragItem.current = params;
     dragNode.current = e.target;
     dragNode.current.addEventListener('dragend', handleDragEnd);
@@ -36,8 +39,9 @@ function DriverOrder() {
     }, 0)
   }
 
-  const handleDragEnter = (e, params) => {
-    console.log('Entering drag..', params)
+  const handleDragEnter = (e, params, driverId) => {
+    console.log('Entering drag..', params);
+    dragDriverId.current = driverId;
     const currentItem = dragItem.current;
     if (e.target !== dragNode.current) {
       console.log("TARGET IS NOT THE SAME");
@@ -52,10 +56,22 @@ function DriverOrder() {
 
   const handleDragEnd = () => {
     console.log('Ending drag..')
+
+    axios
+      .post('/orders/assign', {
+        orderId: dragOrderId.current,
+        driverId: dragDriverId.current
+      })
+      .then((res) => {
+        console.log(res);
+      })
+
     setDragging(false);
     dragNode.current.removeEventListener('dragend', handleDragEnd);
     dragItem.current = null;
     dragNode.current = null;
+    dragOrderId.current = null;
+    dragDriverId.current = null;
   }
 
   const getStyles = (params) => {
@@ -80,8 +96,8 @@ function DriverOrder() {
                 <div
                   draggable={buttonPopup || confirmationPopup? false : true}
                   onDragOver={(e) => {e.preventDefault()}}
-                  onDragStart={(e) => {handleDragStart(e, {driverI, orderI})}}
-                  onDragEnter={dragging?(e) => {handleDragEnter(e, {driverI, orderI})}:null}
+                  onDragStart={(e) => {handleDragStart(e, {driverI, orderI}, order._id)}}
+                  onDragEnter={dragging?(e) => {handleDragEnter(e, {driverI, orderI}, driver._id)}:null}
                   key={order._id} 
                   className={dragging?getStyles({driverI, orderI}):"dnd-item"}
                 >
@@ -106,6 +122,7 @@ function DriverOrder() {
                     setList={setList}
                     revenue={order.revenue}
                     cost={order.cost}
+                    orderId={order._id}
                     driverI={driverI}
                     orderI={orderI}
                     trigger={(buttonPopup === order._id)? true : false}
@@ -115,6 +132,7 @@ function DriverOrder() {
                   </EditPopup>
                   <DeleteConfirmation
                     setList={setList}
+                    orderId={order._id}
                     driverI={driverI}
                     orderI={orderI}
                     trigger={(confirmationPopup === order._id)? true: false}

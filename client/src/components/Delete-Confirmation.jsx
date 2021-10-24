@@ -1,14 +1,24 @@
-import React from 'react'
+import React from 'react';
+import axios from 'axios';
+
 import './Delete-Confirmation.css'
 
 function DeleteConfirmation(props) {
   const onClick = () => {
-    props.setList(oldList => {
-      let newList = JSON.parse(JSON.stringify(oldList));
-      newList[props.driverI].orders.splice(props.orderI, 1);
-      return newList;
-    })
-    props.setTrigger(false);
+    axios
+      .post('orders/delete', {
+        orderId: props.orderId
+      })
+      .then((res) => {
+        console.log(res);
+        
+        props.setList(oldList => {
+          let newList = JSON.parse(JSON.stringify(oldList));
+          newList[props.driverI].orders.splice(props.orderI, 1);
+          return newList;
+        })
+        props.setTrigger(false);
+      })
   }
 
   return (props.trigger) ? (
