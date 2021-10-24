@@ -7,11 +7,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Database
-import { connectDb } from './models/index.js';
+import models, { connectDb } from './models/index.js';
 
-// Initial seed functions
+// Initial seed function
+import { createDrivers } from './seeds/create-drivers.js';
 
 // Routers
+import indexRouter from './routes/index.js';
 
 const app = express();
 
@@ -20,14 +22,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));
 
+app.use('/', indexRouter);
+
 const eraseDatabaseOnSync = true;
 
 connectDb().then(async () => {
-  console.log('database connected!');
-});
+  if (eraseDatabaseOnSync) {
+    await Promise.all([
+      models.Driver.deleteMany({}),
+      models.Order.deleteMany({})
+    ]);
 
-app.get("/", (req, res) => {
-  res.status(200).send("Welcome to Driver Assignment server");
+    createDrivers();
+  }
+  console.log('database connected!');
 });
 
 app.listen(PORT, () => {

@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
 
 import EditPopup from './Edit-Popup';
 import DeleteConfirmation from './Delete-Confirmation';
@@ -6,11 +7,21 @@ import DeleteConfirmation from './Delete-Confirmation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEquals, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
-function DriverOrder({data}) {
-  const [list, setList] = useState(data);
+function DriverOrder() {
+  const [list, setList] = useState([]);
   const [dragging, setDragging] = useState(false);
   const [buttonPopup, setButtonPopup] = useState(false);
   const [confirmationPopup, setConfirmationPopup] = useState(false);
+
+  useEffect(() => {
+    axios
+      .get('/orders')
+      .then((res) => {
+        const data = res.data;
+        setList(data);
+        console.log(data)
+      })
+  },[]);
 
   const dragItem = useRef();
   const dragNode = useRef();
@@ -59,7 +70,7 @@ function DriverOrder({data}) {
     <div className="drag-drop">
           {list.map((driver, driverI) => (
             <div 
-              key={driver.fullname} 
+              key={driver._id} 
               className="dnd-group"
               onDragEnter={dragging && !driver.orders.length?(e) => handleDragEnter(e, {driverI, orderI: 0}):null}
               onDragOver={(e) => {e.preventDefault()}}
@@ -71,32 +82,33 @@ function DriverOrder({data}) {
                   onDragOver={(e) => {e.preventDefault()}}
                   onDragStart={(e) => {handleDragStart(e, {driverI, orderI})}}
                   onDragEnter={dragging?(e) => {handleDragEnter(e, {driverI, orderI})}:null}
-                  key={order.id} 
+                  key={order._id} 
                   className={dragging?getStyles({driverI, orderI}):"dnd-item"}
                 >
                   <div className="equal-icon"><FontAwesomeIcon icon={faEquals} /></div>
                   <button 
                     className="edit-icon"
-                    onClick={() => setButtonPopup(order.id)}
+                    onClick={() => setButtonPopup(order._id)}
                   >
                     <FontAwesomeIcon icon={faEdit} />
                   </button>
                   <button 
                     className="delete-icon"
-                    onClick={() => setConfirmationPopup(order.id)}
+                    onClick={() => setConfirmationPopup(order._id)}
                   >
                     <FontAwesomeIcon icon={faTrashAlt} />
                   </button>
                   <div>{order.description}</div>
-                  <div>Revenue: $<span className="green">{order.revenue}</span></div>
-                  <div>Cost: $<span className="red">{order.cost}</span></div>
+                  <div>Revenue: $<span className="green">{order.revenue.toFixed(2)}</span></div>
+                  <div>Cost: $<span className="red">{order.cost.toFixed(2)}</span></div>
+                  <div className="order-id">order-id: {order._id}</div> 
                   <EditPopup
                     setList={setList}
                     revenue={order.revenue}
                     cost={order.cost}
                     driverI={driverI}
                     orderI={orderI}
-                    trigger={(buttonPopup === order.id)? true : false}
+                    trigger={(buttonPopup === order._id)? true : false}
                     setTrigger={setButtonPopup}
                     >
                     <h3>{order.description}</h3>
@@ -105,7 +117,7 @@ function DriverOrder({data}) {
                     setList={setList}
                     driverI={driverI}
                     orderI={orderI}
-                    trigger={(confirmationPopup === order.id)? true: false}
+                    trigger={(confirmationPopup === order._id)? true: false}
                     setTrigger={setConfirmationPopup}
                   >
                     <h3>Are you sure you want to delete the Order?</h3>

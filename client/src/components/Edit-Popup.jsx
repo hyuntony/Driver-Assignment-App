@@ -8,8 +8,8 @@ function EditPopup(props) {
   const onSubmit = (data) => {
     props.setList(oldList => {
       let newList = JSON.parse(JSON.stringify(oldList));
-      newList[props.driverI].orders[props.orderI].revenue = data.revenue;
-      newList[props.driverI].orders[props.orderI].cost = data.cost;
+      newList[props.driverI].orders[props.orderI].revenue = Number(data.revenue);
+      newList[props.driverI].orders[props.orderI].cost = Number(data.cost);
       return newList;
     })
     props.setTrigger(false);
@@ -26,11 +26,11 @@ function EditPopup(props) {
         <form onSubmit={handleSubmit(onSubmit)}>
           <label>
             Revenue:<br />
-            <input {...register("revenue", {required: true})} type="number" placeholder={props.revenue} />
+            <input {...register("revenue", {required: true})} type="number" step="0.01" placeholder={props.revenue} />
           </label>
           <label>
             Cost:<br />
-            <input {...register("cost", {required: true})} type="number" placeholder={props.cost} />
+            <input {...register("cost", {required: true})} type="number" step="0.01" placeholder={props.cost} />
           </label>
           <span>{errors.revenue && "Revenue is required"}</span>
           <span>{errors.cost && "Cost is required"}</span>
